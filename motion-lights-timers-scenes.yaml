@@ -1,6 +1,8 @@
 blueprint:
   name: Adaptive Motion-Based Light Control with Custom Scenes and Timers
-  description: This blueprint automates light control based on motion and scenes, with adjustable times and scenes. It includes inputs for a motion sensor, light entity, fallback scene, current scene Input Text, start time, end time, and two durations of no motion.
+  description: NOTE: You need to create an Input Text entity named "Current Scene *ROOM*" (e.g., "Current Scene Kitchen") to track the currently active scene.
+  
+This blueprint automates light control based on motion and scenes, with adjustable times and scenes. It includes inputs for a motion sensor, light entity, fallback scene, current scene Input Text, start time, end time, and two durations of no motion.
 
 When motion is detected, the blueprint first checks if the current scene is not equal to the fallback scene. If not, the blueprint saves the current scene in the Input Text entity. If the current scene is the fallback scene, the fallback scene is activated.
 
