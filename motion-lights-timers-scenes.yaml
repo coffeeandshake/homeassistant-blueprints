@@ -1,0 +1,101 @@
+blueprint:
+  name: Better Motion and Lights
+  description: Automate light control based on motion and scenes, with adjustable times and scenes
+  domain: automation
+  input:
+    motion_sensor:
+      name: Motion Sensor
+      description: The motion sensor that triggers the automation
+      selector:
+        entity:
+          domain: binary_sensor
+    light_entity:
+      name: Light Entity
+      description: The light entity to be controlled
+      selector:
+        entity:
+          domain: light
+    fallback_scene:
+      name: Fallback Scene
+      description: The fallback scene to activate after a period of no motion
+      selector:
+        entity:
+          domain: scene
+    current_scene_input_text:
+      name: Current Scene Input Text
+      description: The Input Text entity that tracks the currently active scene
+      selector:
+        entity:
+          domain: input_text
+    time_start:
+      name: Start Time
+      description: Start time for automatic light control
+      default: "07:00:00"
+      selector:
+        time:
+    time_end:
+      name: End Time
+      description: End time for automatic light control
+      default: "23:00:00"
+      selector:
+        time:
+    no_motion_short_duration:
+      name: Short No Motion Duration
+      description: Duration of no motion before the light turns off
+      default: "00:10:00"
+      selector:
+        time:
+    no_motion_long_duration:
+      name: Long No Motion Duration
+      description: Duration of no motion before the fallback scene is activated
+      default: "00:20:00"
+      selector:
+        time:
+
+mode: single
+trigger:
+  - platform: state
+    entity_id: !input "motion_sensor"
+    to: "on"
+  - platform: state
+    entity_id: !input "motion_sensor"
+    to: "off"
+    for: !input "no_motion_short_duration"
+condition:
+  - condition: time
+    after: !input "time_start"
+    before: !input "time_end"
+action:
+  - choose:
+      - conditions:
+          - condition: state
+            entity_id: !input "motion_sensor"
+            state: "on"
+        sequence:
+          - service_template: >
+              {% if states(input_text.current_scene) != input_fallback_scene %}
+                input_text.set_value
+                entity_id: !input "current_scene_input_text"
+                value: "{{ states(input_text.current_scene) }}"
+              {% else %}
+                scene.turn_on
+                entity_id: !input "fallback_scene"
+              {% endif %}
+      - conditions:
+          - condition: state
+            entity_id: !input "motion_sensor"
+            state: "off"
+        sequence:
+          - service: light.turn_off
+            target:
+              entity_id: !input "light_entity"
+          - wait_for_trigger:
+              - platform: state
+                entity_id: !input "motion_sensor"
+                to: "off"
+                for: !input "no_motion_long_duration"
+          - choose:
+              - conditions:
+                  - condition: state
+                    entity_id: !input "motion_sensor"
+                    state: "off"
