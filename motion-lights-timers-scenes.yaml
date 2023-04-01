@@ -1,6 +1,10 @@
 blueprint:
-  name: Better Motion and Lights
-  description: Automate light control based on motion and scenes, with adjustable times and scenes
+  name: Adaptive Motion-Based Light Control with Custom Scenes and Timers
+  description: This blueprint automates light control based on motion and scenes, with adjustable times and scenes. It includes inputs for a motion sensor, light entity, fallback scene, current scene Input Text, start time, end time, and two durations of no motion.
+
+When motion is detected, the blueprint first checks if the current scene is not equal to the fallback scene. If not, the blueprint saves the current scene in the Input Text entity. If the current scene is the fallback scene, the fallback scene is activated.
+
+When no motion is detected for the short no motion duration, the blueprint turns off the light. The blueprint then waits for no motion for the long no motion duration. If there is still no motion detected, the fallback scene is activated.
   domain: automation
   input:
     motion_sensor:
