@@ -1,0 +1,108 @@
+blueprint:
+  name: Woonkamer CO2 melding
+  description: Verstuurt meldingen op basis van aanpasbare CO2-waarden en berichten. Optionele aanwezigheidsvoorwaarde.
+  domain: automation
+  input:
+    co2_sensor:
+      name: CO2 Sensor
+      description: De sensor die de CO2-waarde meet.
+      selector:
+        entity:
+          domain: sensor
+    notify_target:
+      name: Notify doelgroep
+      description: De personen die een melding moeten ontvangen.
+      selector:
+        target:
+          entity:
+            domain: notify
+    threshold_value:
+      name: Drempelwaarde
+      description: De CO2-waarde waarboven een waarschuwing wordt verstuurd.
+      default: 900
+      selector:
+        number:
+          min: 0
+          max: 5000
+          step: 10
+          unit_of_measurement: "ppm"
+    presence_entity:
+      name: Aanwezigheidsentiteit (optioneel)
+      description: De entiteit die de aanwezigheid van de persoon bijhoudt.
+      default: ""
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: presence
+    message_above_threshold:
+      name: Bericht bij hoge CO2-waarde
+      description: Bericht dat wordt verstuurd als de CO2-waarde boven de drempelwaarde uitkomt.
+      default: "⚠️ CO2 in de woonkamer is nu {{ co2_value }}! Zorg voor betere ventilatie. 🌬️ {% if co2_value | float > previous_co2_value | float %} CO2 stijgt. 📈 {% else %} CO2 daalt. 📉 {% endif %}"
+      selector:
+        text:
+    message_below_threshold:
+      name: Bericht bij lage CO2-waarde
+      description: Bericht dat wordt verstuurd als de CO2-waarde onder de drempelwaarde zakt.
+      default: "✅ CO2 in de woonkamer is nu {{ co2_value }}! Terug onder {{ threshold_value }}. Goede ventilatie! 🌬️"
+      selector:
+        text:
+
+trigger:
+  - platform: time_pattern
+    minutes: /10
+condition: []
+action:
+  - variables:
+      co2_value: "{{ states(co2_sensor) }}"
+      previous_co2_value: "{{ states('input_number.woonkamer_co2') }}"
+  - service: input_number.set_value
+    target:
+      entity_id: input_number.woonkamer_co2
+    data:
+      value: "{{ co2_value }}"
+  - choose:
+      - conditions:
+          - condition: numeric_state
+            entity_id: "{{ co2_sensor }}"
+            above: "{{ threshold_value }}"
+          - condition: template
+            value_template: >-
+              {% if presence_entity == "" %}
+                true
+              {% else %}
+                {{ is_state(presence_entity, 'on') }}
+              {% endif %}
+        sequence:
+          - service: notify.send_message
+            target: "{{ notify_target }}"
+            data:
+              message: "{{ message_above_threshold }}"
+          - service: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.woonkamer_co2_notificatie
+            data: {}
+      - conditions:
+          - condition: numeric_state
+            entity_id: "{{ co2_sensor }}"
+            below: "{{ threshold_value }}"
+          - condition: state
+            entity_id: input_boolean.woonkamer_co2_notificatie
+            state: "on"
+          - condition: template
+            value_template: >-
+              {% if presence_entity == "" %}
+                true
+              {% else %}
+                {{ is_state(presence_entity, 'on') }}
+              {% endif %}
+        sequence:
+          - service: notify.send_message
+            target: "{{ notify_target }}"
+            data:
+              message: "{{ message_below_threshold }}"
+          - service: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.woonkamer_co2_notificatie
+            data: {}
+mode: single
+
