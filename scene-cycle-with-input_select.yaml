@@ -6,9 +6,8 @@ blueprint:
     trigger:
       name: Trigger
       description: The trigger to cycle through the scenes.
-      # De juiste syntaxis voor een gebruiker-gedefinieerde trigger is om gewoon "trigger" hier te laten, zonder de aanvullende "{}".
       selector:
-        trigger: 
+        action: {}
 
     input_select_scene:
       name: Scene Selector
@@ -21,14 +20,14 @@ automation:
   alias: "Daan Dobber's Scene Cycle with input_select"
   description: ""
   mode: restart
-  trigger: !input 'trigger'
+  trigger:
+    - platform: event
+      event_type: !input 'trigger'
   condition: []
   action:
     - service: input_select.select_next
-      data:
-        cycle: true
       target:
         entity_id: !input 'input_select_scene'
     - service: scene.turn_on
       data_template:
-        entity_id: "{{ states(input_select_scene.state) }}"
+        entity_id: "{{ states('input_select.' + input_select_scene) }}"
