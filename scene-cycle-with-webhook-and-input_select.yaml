@@ -33,5 +33,5 @@ action:
       entity_id: !input input_select_entity
   - service: scene.turn_on
     data:
-      entity_id: !input "{{ states('!input input_select_entity') }}"
+      entity_id: "{{ states('!input input_select_entity') }}"
 mode: restart
