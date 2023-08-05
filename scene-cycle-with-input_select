@@ -1,0 +1,33 @@
+blueprint:
+  name: Scene Cycle with input_select
+  description: Cycles through and activates scenes using a user-defined trigger. Make a input_select helper to define the scenes. 
+  domain: automation
+  input:
+    trigger:
+      name: Trigger
+      description: The trigger to cycle through the scenes.
+      selector:
+        action: {}
+
+    input_select_scene:
+      name: Scene Selector
+      description: The input_select entity used to choose the scenes.
+      selector:
+        entity:
+          domain: input_select
+
+automation:
+  alias: Scene Cycle with input_select
+  description: ""
+  mode: restart
+  trigger: !input 'trigger'
+  condition: []
+  action:
+    - service: input_select.select_next
+      data:
+        cycle: true
+      target:
+        entity_id: !input 'input_select_scene'
+    - service: scene.turn_on
+      data_template:
+        entity_id: "{{ states(!input 'input_select_scene') }}"
