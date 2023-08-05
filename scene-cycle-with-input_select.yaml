@@ -10,15 +10,7 @@ blueprint:
         entity:
           domain: input_select
 
-automation:
-  alias: "Daan Dobber's Scene Cycle with input_select"
-  description: ""
-  mode: restart
-  # De trigger-sectie wordt hier zonder selector geplaatst, zodat de gebruiker de trigger kan kiezen bij het maken van de automatisering.
-  trigger:
-    - platform: state
-      entity_id: !input 'input_select_scene'
-  condition: []
+  trigger: !input 'trigger'
   action:
     - service: input_select.select_next
       target:
