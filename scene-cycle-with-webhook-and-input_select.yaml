@@ -1,0 +1,37 @@
+blueprint:
+  name: Daan Dobber's Scene Cycle with webhook and input_select
+  description: Cycles through and activates scenes using a webhook. First make an input_select helper to define the scenes.
+  domain: automation
+  input:
+    webhook_id:
+      name: Webhook ID
+      description: The webhook ID to trigger the automation.
+      selector:
+        text:
+    input_select_entity:
+      name: Input Select Entity
+      description: The input select entity containing the scenes to cycle through.
+      selector:
+        entity:
+          domain: input_select
+
+alias: Daan Dobber's Scene Cycle with webhook and input_select
+description: ""
+trigger:
+  - platform: webhook
+    allowed_methods:
+      - POST
+      - PUT
+    local_only: false
+    webhook_id: !input webhook_id
+condition: []
+action:
+  - service: input_select.select_next
+    data:
+      cycle: true
+    target:
+      entity_id: !input input_select_entity
+  - service: scene.turn_on
+    data_template:
+      entity_id: "{{ states(!input 'input_select_entity') }}"
+mode: restart
