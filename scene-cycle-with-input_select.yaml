@@ -30,4 +30,4 @@ automation:
         entity_id: !input 'input_select_scene'
     - service: scene.turn_on
       data_template:
-        entity_id: "{{ states(input_select_scene) }}"
+        entity_id: "{{ states(input_select_scene.state) }}"
