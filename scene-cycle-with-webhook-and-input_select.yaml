@@ -32,6 +32,6 @@ action:
     target:
       entity_id: !input input_select_entity
   - service: scene.turn_on
-    data_template:
-      entity_id: "{{ states(input_select_entity) }}"
+    data:
+      entity_id: "{{ states(input_select_entity.value) }}"
 mode: restart
