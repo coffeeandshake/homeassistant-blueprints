@@ -1,5 +1,5 @@
 blueprint:
-  name: Scene Cycle with input_select
+  name: "Daan Dobber's Scene Cycle with input_select"
   description: Cycles through and activates scenes using a user-defined trigger. Make a input_select helper to define the scenes. 
   domain: automation
   input:
@@ -17,7 +17,7 @@ blueprint:
           domain: input_select
 
 automation:
-  alias: Scene Cycle with input_select
+  alias: "Daan Dobber's Scene Cycle with input_select"
   description: ""
   mode: restart
   trigger: !input 'trigger'
