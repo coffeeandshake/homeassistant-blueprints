@@ -6,8 +6,9 @@ blueprint:
     trigger:
       name: Trigger
       description: The trigger to cycle through the scenes.
+      # De juiste syntaxis voor een gebruiker-gedefinieerde trigger is om gewoon "trigger" hier te laten, zonder de aanvullende "{}".
       selector:
-        trigger: {}
+        trigger: 
 
     input_select_scene:
       name: Scene Selector
