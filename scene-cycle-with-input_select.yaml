@@ -1,13 +1,14 @@
 blueprint:
   name: "Daan Dobber's Scene Cycle with input_select"
-  description: Cycles through and activates scenes using a user-defined trigger. First make an input_select helper to define the scenes.
+  description: Cycles through and activates scenes using a user-defined triggers. First make an input_select helper to define the scenes.
   domain: automation
   input:
-    trigger:
-      name: Trigger
-      description: The trigger to cycle through the scenes.
+    trigger_entities:
+      name: Trigger Entities
+      description: Choose the entities that will trigger the scene cycle.
       selector:
-        action: {}
+        entity:
+          multiple: true
 
     input_select_scene:
       name: Scene Selector
@@ -18,11 +19,11 @@ blueprint:
 
 automation:
   alias: "Daan Dobber's Scene Cycle with input_select"
-  description: ""
+  description: "Cycles through and activates scenes using a user-defined triggers. First make an input_select helper to define the scenes."
   mode: restart
   trigger:
-    - platform: event
-      event_type: !input 'trigger'
+    - platform: state
+      entity_id: !input 'trigger_entities'
   action:
     - service: input_select.select_next
       data:
@@ -31,4 +32,4 @@ automation:
         entity_id: !input 'input_select_scene'
     - service: scene.turn_on
       data_template:
-        entity_id: "{{ states(input_select_scene.state) }}"
+        entity_id: "{{ states('input_select.' ~ input_select_scene) }}"
