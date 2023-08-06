@@ -9,7 +9,7 @@ blueprint:
       name: Choose a Trigger
       description: Define the event that activates the scene cycle.
       selector:
-        action: {}
+        trigger: {}
 
     input_select_entity:
       name: Input Select Entity
