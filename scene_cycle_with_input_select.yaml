@@ -13,7 +13,6 @@ blueprint:
             - webhook
             - event
             - device
-            - service_call
     webhook_id:
       name: Webhook ID (Only for Webhook trigger)
       description: Only fill if Trigger Type is Webhook.
@@ -40,16 +39,6 @@ blueprint:
       description: The state which will trigger the automation (Only fill if Trigger Type is Device).
       selector:
         text:
-    service_entity:
-      name: Service Entity (Only for Service trigger)
-      description: The entity on which the service is called (Only fill if Trigger Type is Service Call).
-      selector:
-        entity:
-    service_name:
-      name: Service Name (Only for Service trigger)
-      description: The service name which will trigger the automation (Only fill if Trigger Type is Service Call).
-      selector:
-        text:
 
 trigger:
   - platform: "{{ input.trigger_type }}"
@@ -64,9 +53,6 @@ trigger:
     {% elif input.trigger_type == 'device' %}
     entity_id: "{{ input.entity_id }}"
     to: "{{ input.to_state }}"
-    {% elif input.trigger_type == 'service_call' %}
-    entity_id: "{{ input.service_entity }}"
-    service: "{{ input.service_name }}"
     {% endif %}
 
 condition: []
