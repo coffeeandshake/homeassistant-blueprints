@@ -32,7 +32,7 @@ action:
     target:
       entity_id: !input input_select_entity
   - variables:
-      selected_scene: "{{ states(input_select_entity) }}"
+      selected_scene: "{{ states(!input input_select_entity) }}"
   - service: scene.turn_on
     data:
       entity_id: "{{ selected_scene }}"
