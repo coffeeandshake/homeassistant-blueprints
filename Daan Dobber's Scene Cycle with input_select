@@ -1,0 +1,38 @@
+blueprint:
+  name: Daan Dobber's Scene Cycle with input_select
+  description: >
+    This automation allows you to cycle through scenes defined in an input_select. 
+    You can define your own trigger to determine when the scenes should cycle.
+  domain: automation
+  input:
+    user_trigger:
+      name: Choose a Trigger
+      description: Define the event that activates the scene cycle.
+      selector:
+        action: {}
+
+    input_select_entity:
+      name: Input Select Entity
+      description: The input_select entity containing the scenes to cycle through.
+      selector:
+        entity:
+          domain: input_select
+
+trigger: !input user_trigger
+
+condition: []
+
+action:
+  - service: input_select.select_next
+    data:
+      cycle: true
+    target:
+      entity_id: !input input_select_entity
+  - variables:
+      input_select: !input input_select_entity
+      selected_scene: "{{ states(input_select) }}"
+  - service: scene.turn_on
+    data:
+      entity_id: "{{ selected_scene }}"
+
+mode: restart
