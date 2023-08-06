@@ -31,7 +31,9 @@ action:
       cycle: true
     target:
       entity_id: !input input_select_entity
+  - variables:
+      selected_scene: "{{ states(input_select_entity) }}"
   - service: scene.turn_on
-    data_template:
-      entity_id: "{{ states('!input input_select_entity') }}"
+    data:
+      entity_id: "{{ selected_scene }}"
 mode: restart
