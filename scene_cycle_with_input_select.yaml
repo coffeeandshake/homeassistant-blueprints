@@ -6,9 +6,8 @@ blueprint:
   input:
     next_scene:
       name: Next scene
-      selector:
-        entity:
-        multiple: true
+      entity:
+      multiple: true
      
     input_select_entity:
       name: Input Select Entity
