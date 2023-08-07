@@ -6,12 +6,7 @@ blueprint:
   input:
     next_scene:
       name: Next scene
-      selector:
-        entity:
-          domain: light
-          domain: switch
-          domain: button
-      
+     
     input_select_entity:
       name: Input Select Entity
       description: The input select entity containing the scenes to cycle through.
