@@ -4,22 +4,23 @@ blueprint:
   domain: automation
 
   input:
-    trigger_entities:
-      name: Trigger Entities
-      description: Choose the entities that will trigger the scene cycle.
+    next_scene:
+      name: Next scene
       selector:
         entity:
-          multiple: true
+          domain: light
+          domain: switch
+          domain: button
+      
     input_select_entity:
       name: Input Select Entity
       description: The input select entity containing the scenes to cycle through.
       selector:
         entity:
           domain: input_select
-
 trigger:
   - platform: state
-    entity_id: !input trigger_entities
+    entity_id: !input next_scene
 
 action:
   - service: input_select.select_next
