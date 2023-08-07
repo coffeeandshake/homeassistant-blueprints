@@ -1,5 +1,5 @@
 blueprint:
-  name: Daan Dobber's Scene Cycle (multiple triggers)
+  name: Daan Dobber's Scene Cycle
   description: Cycles through and activates scenes based on multiple triggers.
   domain: automation
 
